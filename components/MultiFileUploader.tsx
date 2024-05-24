@@ -13,12 +13,12 @@ const allowedTypes = [
   "image/png",
 ];
 const parts = [
-  {text: `select the json that where shoes model and brand matches one of the following array of brands ${JSON.stringify(brands)}`},
-  {text: "output: JSON object organized as follows {brand: brand, model: model, reference_number: reference_number}, if a brand and model matches",},
-  {text: "input: if the image include sneaker or shoes but model matches one within the provided array of brands, provide the brand, model and reference number that you found",},
+  {text: "input: if the image is sneaker or shoe, provide the brand, model and reference number that you found",},
   {text: "output: JSON object organized as follows {brand: brand, model: model, reference_number: reference_number}, if the image include shoes or Sneaker",},
-  {text: "input: if the image does not include a shoes or sneaker, return and error and the name of the thing that you have found in the image",},
-  {text: "output: JSON object organized as follows {error: 'not_found', detect: name of the thing that you found}, if the image does not include a shoes or sneaker",},
+  {text: `input: check if shoes model and brand matches one of the following array of brands ${JSON.stringify(brands)}, take the best match`},
+  {text: "output: JSON object organized as follows {brand: brand, model: model, reference_number: reference_number}, if a model matches",},
+  {text: "input: if the image does not include a shoe or sneaker, return what you have found in the image",},
+  {text: "output: if the image does not include a shoes or sneaker, return JSON object organized as follows {brand: brand, model: model, reference_number: reference_number}",},
   {text: "output: do not use ```json",},
 ];
 
