@@ -15,10 +15,10 @@ const allowedTypes = [
 const parts = [
   {text: "input: if the image is sneaker or shoe, provide the brand, model and reference number that you found",},
   {text: "output: JSON object organized as follows {brand: brand, model: model, reference_number: reference_number}, if the image include shoes or Sneaker",},
-  {text: `input: check if shoes model and brand matches one of the following array of brands ${JSON.stringify(brands)}, take the best match`},
-  {text: "output: JSON object organized as follows {brand: brand, model: model, reference_number: reference_number}, if a model matches",},
+  {text: `input: check if shoes model and brand matches one of the following array of brands ${JSON.stringify(brands)}, take the best match, otherwise return the brand and model that you found`},
+  {text: "output: JSON object organized as follows {brand: brand, model: model, reference_number: reference_number}",},
   {text: "input: if the image does not include a shoe or sneaker, return what you have found in the image",},
-  {text: "output: if the image does not include a shoes or sneaker, return JSON object organized as follows {brand: brand, model: model, reference_number: reference_number}",},
+  {text: "output: if the image does not includes a shoes or sneaker, return JSON object organized as follows {brand: brand, model: model, reference_number: reference_number}",},
   {text: "output: do not use ```json",},
 ];
 
@@ -109,8 +109,8 @@ function MultiFileUploader() {
       toast({
         title: 'Prediction...',
         description: 'AI Model is predicting...',
-        variant: "default"
-
+        variant: "default",
+        duration: 10000
       });
       const file = files[0];
       const reader = new FileReader();
@@ -152,9 +152,22 @@ function MultiFileUploader() {
 
 
   return (
-      <main className="flex flex-1 flex-col items-center justify-center gap-6 size-full">
+      <main className="flex flex-1 flex-col items-center justify-center gap-4 size-full text-black bg:text-white">
+        <div className="flex flex-col w-full items-center justify-center gap-4">
+          <button
+            type="button" onClick={handlePrediction}
+            className="bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded">Predict with AI
+          </button>
+          <div className="flex flex-col w-full gap-4">
+            <h4>Prediction Result</h4>
+            {
+              prediction &&
+              <p className="flex w-full flex-1 flex-col items-center justify-center bg-slate-300 rounded-md p-4">{prediction}</p>
+            }
+          </div>
+        </div>
         <div className="mb-4 flex w-full flex-1 flex-col items-center gap-2">
-          <form
+        <form
               id="form-file-upload"
               onDragEnter={handleDrag}
               onDragOver={handleDrag}
@@ -182,12 +195,12 @@ function MultiFileUploader() {
                 htmlFor="input-file-upload"
                 className={`flex h-full w-full cursor-pointer flex-col items-center  justify-center rounded-lg p-2`}
             >
-              <span className="mb-2 text-gray-400">{message}</span>
+              <span className="mb-2">{message}</span>
               <li
                   className={`mt-4 flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-amber-500  to-amber-700 px-4 py-2 hover:from-amber-700 hover:to-amber-500`}
                   style={{boxShadow: "0px 10px 10px rgba(0, 0, 0, 0.16)"}}
               >
-                <span className="text-white">Telecharger un ficher</span>
+                <span className="text-white">Image upload</span>
               </li>
               <input
                   type="file"
@@ -201,8 +214,8 @@ function MultiFileUploader() {
               <ul className="grid w-full grid-cols-1 justify-around gap-4 lg:grid-cols-3">
                 {files.map((file, index) => (
                     <li
-                        key={index}
-                        className="col-span-1 flex flex-col items-center justify-between gap-2 rounded-xl border border-gray-400 px-4 py-2"
+                      key={index}
+                      className="col-span-1 flex flex-col items-center justify-between gap-2 py-2"
                     >
                       <Image
                           key={index}
@@ -212,23 +225,13 @@ function MultiFileUploader() {
                           alt="Image_Selectionnee"
                           className="col-span-1 h-[200px] rounded-xl object-cover"
                       />
-                      <Button onClick={() => handleDeleteFile(file)}>Delete</Button>
+                      <Button onClick={() => handleDeleteFile(file)} className="w-full">Delete</Button>
                     </li>
                 ))}
               </ul>
           )}
         </div>
-        <div className="flex w-full flex-1 items-center justify-between gap-2">
-          <button type="button" onClick={handlePrediction}
-                  className="bg-amber-500 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded">Predict
-          </button>
-          <div className="flex flex-col w-1/2 gap-4">
-            <h4>Result</h4>
-            {prediction && <p className="flex w-full flex-1 flex-col items-center justify-center bg-slate-300 text-black rounded-md p-4">{prediction}</p>}
-          </div>
-        </div>
       </main>
-
   );
 }
 
