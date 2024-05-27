@@ -1,11 +1,11 @@
 "use client"
 import React, {useState} from "react";
 import {GoogleGenerativeAI} from "@google/generative-ai"
-import {useToast} from "@/components/ui/use-toast";
 import Image from "next/image";
 import {brands} from "@/brands";
 import {Button} from "@/components/ui/button";
 import {NEXT_PUBLIC_VISION_API_KEY, NEXT_PUBLIC_VISION_MODEL_NAME} from "@/components/constants";
+import {toast} from "sonner";
 
 const allowedTypes = [
   "image/jpeg",
@@ -31,7 +31,6 @@ function MultiFileUploader() {
   );
   const [errorFile, setErrorFile] = useState<boolean>(false);
   const [prediction, setPrediction] = useState<any>();
-  const { toast } = useToast();
 
   const handleFileType = (f: any) => {
     const wrongType = f.map(
@@ -104,14 +103,13 @@ function MultiFileUploader() {
   };
 
   const handlePrediction = async () => {
+    const toastId = toast("Prediction Begins...");
+    toast.loading('Prediction...',{
+      description: 'AI Model is predicting...',
+      id: toastId,
+    });
     try {
       setPrediction("")
-      toast({
-        title: 'Prediction...',
-        description: 'AI Model is predicting...',
-        variant: "default",
-        duration: 10000
-      });
       const file = files[0];
       const reader = new FileReader();
       reader.onload = async () => {
@@ -126,27 +124,26 @@ function MultiFileUploader() {
         const result = await model.generateContent([...parts, image]);
         if (result.response) {
           setPrediction(result.response.text());
-          toast({
-            title: 'Success Prediction.',
+          toast.success('Success Prediction.', {
             description: 'Prediction have been executed with success.',
-            className: 'bg-green-200'
+            id: toastId,
           });
         }
       };
       reader.onerror = (error) => {
-        toast({
-          title: 'Prediction Failed',
-          description: `${error}`,
-          variant: "destructive"
+        toast.error('Prediction Failed',{
+          description: `Prediction failed with error: ${error}`,
+          id: toastId,
         });
       };
       reader.readAsArrayBuffer(file);
-    } catch (e) {
-      toast({
-        title: 'Prediction Failed',
-        description: `${e}`,
-        className: 'bg-red-200'
+      toast.dismiss()
+    } catch (error) {
+      toast.error('Prediction Failed',{
+        description: `${error}`,
+        id: toastId,
       });
+      toast.dismiss()
     }
   };
 
